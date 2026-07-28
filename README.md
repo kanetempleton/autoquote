@@ -8,3 +8,12 @@ How to run the app:
 ```
 ruby app/app.rb
 ```
+
+How to run the tests:
+```
+# Run all Cucumber features
+bundle exec cucumber
+
+# Run all RSpec tests
+bundle exec rspec
+```
