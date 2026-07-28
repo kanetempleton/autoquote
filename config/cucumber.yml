@@ -1,0 +1,2 @@
+default: --format pretty --publish-quiet
+ci: --format progress --publish-quiet

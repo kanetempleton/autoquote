@@ -1,0 +1,24 @@
+{
+  "name": "autoquote",
+  "version": "1.0.0",
+  "description": "Insurance quote simulator for using test automation framework and best practices using Ruby.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanetempleton/autoquote.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kanetempleton/autoquote/issues"
+  },
+  "homepage": "https://github.com/kanetempleton/autoquote#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.0"
+  }
+}
