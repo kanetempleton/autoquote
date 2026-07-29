@@ -13,7 +13,7 @@ helpers do
     base = 500.0
     age_factor = age.to_i < 25 ? 1.5 : (age.to_i > 65 ? 1.3 : 1.0)
     year_factor = vehicle_year.to_i < 2015 ? 1.4 : 1.0
-    zip_factor = zip.to_s.start_with?('9') ? 1.2 : 1.0  # simple mock
+    zip_factor = zip.to_s.start_with?('9') ? 1.2 : 1.0
     (base * age_factor * year_factor * zip_factor).round(2)
   end
 end
@@ -34,10 +34,40 @@ post '/quotes' do
   vehicle_year = data['vehicle_year']
   zip          = data['zip']
 
-  if age.nil? || vehicle_year.nil? || zip.nil?
-    status 422
-    return { error: 'Missing required fields: age, vehicle_year, zip' }.to_json
+  errors = []
+
+  # Required / blank checks
+  errors << 'age is required'          if age.nil? || age == ''
+  errors << 'vehicle_year is required' if vehicle_year.nil? || vehicle_year == ''
+  errors << 'zip is required'          if zip.nil? || zip == ''
+
+  # Type checks (only if present)
+  unless age.nil? || age == ''
+    unless age.is_a?(Integer) || (age.is_a?(String) && age.match?(/\A\d+\z/))
+      errors << 'age must be an integer'
+    end
   end
+
+  unless vehicle_year.nil? || vehicle_year == ''
+    unless vehicle_year.is_a?(Integer) || (vehicle_year.is_a?(String) && vehicle_year.match?(/\A\d+\z/))
+      errors << 'vehicle_year must be an integer'
+    end
+  end
+
+  unless zip.nil? || zip == ''
+    unless zip.is_a?(String) && zip.match?(/\A\d{5}\z/)
+      errors << 'zip must be a 5-digit string'
+    end
+  end
+
+  if errors.any?
+    status 422
+    return { error: errors.join(', ') }.to_json
+  end
+
+  age          = age.to_i
+  vehicle_year = vehicle_year.to_i
+  zip          = zip.to_s
 
   quote_id = SecureRandom.uuid
   premium  = calculate_premium(age, vehicle_year, zip)
@@ -89,13 +119,13 @@ get '/' do
     <h1>Get an Auto Quote</h1>
     <form id="quoteForm">
       <label>Age</label>
-      <input type="number" id="age" required min="16" max="100">
+      <input type="number" id="age" min="16" max="100">
 
       <label>Vehicle Year</label>
-      <input type="number" id="vehicle_year" required min="1990" max="2026">
+      <input type="number" id="vehicle_year" min="1990" max="2026">
 
       <label>ZIP Code</label>
-      <input type="text" id="zip" required pattern="[0-9]{5}">
+      <input type="text" id="zip" pattern="[0-9]{5}">
 
       <button type="submit">Get Quote</button>
     </form>
@@ -109,10 +139,14 @@ get '/' do
         resultDiv.style.display = 'block';
         resultDiv.innerHTML = 'Calculating...';
 
+        const ageVal = document.getElementById('age').value;
+        const yearVal = document.getElementById('vehicle_year').value;
+        const zipVal = document.getElementById('zip').value;
+
         const payload = {
-          age: parseInt(document.getElementById('age').value),
-          vehicle_year: parseInt(document.getElementById('vehicle_year').value),
-          zip: document.getElementById('zip').value
+          age: ageVal === '' ? null : parseInt(ageVal, 10),
+          vehicle_year: yearVal === '' ? null : parseInt(yearVal, 10),
+          zip: zipVal === '' ? null : zipVal
         };
 
         try {
