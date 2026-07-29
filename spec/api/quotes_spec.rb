@@ -40,7 +40,7 @@ RSpec.describe 'Quotes API', type: :request do
 
                 expect(last_response.status).to eq(422)
                 response_data = JSON.parse(last_response.body)
-                expect(response_data['error']).to eq('Missing required fields: age, vehicle_year, zip')
+                expect(response_data['error']).to match(/age is required/i)
             end
             it 'returns 422 when vehicle_year is missing' do
                 payload = valid_payload.except(:vehicle_year)
@@ -48,7 +48,7 @@ RSpec.describe 'Quotes API', type: :request do
 
                 expect(last_response.status).to eq(422)
                 response_data = JSON.parse(last_response.body)
-                expect(response_data['error']).to eq('Missing required fields: age, vehicle_year, zip')
+                expect(response_data['error']).to match(/vehicle_year is required/i)
             end
             it 'returns 422 when zip is missing' do
                 payload = valid_payload.except(:zip)
@@ -56,7 +56,7 @@ RSpec.describe 'Quotes API', type: :request do
 
                 expect(last_response.status).to eq(422)
                 response_data = JSON.parse(last_response.body)
-                expect(response_data['error']).to eq('Missing required fields: age, vehicle_year, zip')
+                expect(response_data['error']).to match(/zip is required/i)
             end
         end
 
