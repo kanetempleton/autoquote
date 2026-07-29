@@ -32,7 +32,43 @@ RSpec.describe 'Quotes API', type: :request do
         end
     end
 
+    # TESTS 2, 3, 4 - invalid requests due to missing fields return 422 with appropriate error message
+    context 'with missing fields' do
+        it 'returns 422 when age is missing' do
+            payload = valid_payload.except(:age)
+            post '/quotes', payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
 
+            expect(last_response.status).to eq(422)
+            response_data = JSON.parse(last_response.body)
+            expect(response_data['error']).to eq('Missing required fields: age, vehicle_year, zip')
+        end
+        it 'returns 422 when vehicle_year is missing' do
+            payload = valid_payload.except(:vehicle_year)
+            post '/quotes', payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
 
+            expect(last_response.status).to eq(422)
+            response_data = JSON.parse(last_response.body)
+            expect(response_data['error']).to eq('Missing required fields: age, vehicle_year, zip')
+        end
+        it 'returns 422 when zip is missing' do
+            payload = valid_payload.except(:zip)
+            post '/quotes', payload.to_json, { 'CONTENT_TYPE' => 'application/json' }
+
+            expect(last_response.status).to eq(422)
+            response_data = JSON.parse(last_response.body)
+            expect(response_data['error']).to eq('Missing required fields: age, vehicle_year, zip')
+        end
+    end
+
+    # TEST 5 - invalid JSON returns 400 with appropriate error message
+    context 'with invalid JSON' do
+        it 'returns 400 for invalid JSON' do
+            post '/quotes', 'invalid_json', { 'CONTENT_TYPE' => 'application/json' }
+
+            expect(last_response.status).to eq(400)
+            response_data = JSON.parse(last_response.body)
+            expect(response_data['error']).to match(/Invalid JSON/i)
+        end
+    end
 end
 end
