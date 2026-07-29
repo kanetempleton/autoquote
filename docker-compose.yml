@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports:
+      - "43595:43595"
+    environment:
+      - RACK_ENV=production
+    volumes:
+      - .:/app
+    command: ruby app/app.rb
