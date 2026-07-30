@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: autoquote
+  labels:
+    app: autoquote
+spec:
+  type: NodePort          # easy to reach from outside a local cluster
+  selector:
+    app: autoquote
+  ports:
+    - port: 80            # port the Service listens on inside the cluster
+      targetPort: 43595   # port your Sinatra app actually uses
+      nodePort: 30080     # port you’ll hit on localhost (optional but convenient)

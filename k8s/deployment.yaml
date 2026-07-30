@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autoquote
+  labels:
+    app: autoquote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoquote
+  template:
+    metadata:
+      labels:
+        app: autoquote
+    spec:
+      containers:
+        - name: autoquote
+          image: autoquote:latest          # local image name
+          imagePullPolicy: IfNotPresent    # use the image we already built
+          ports:
+            - containerPort: 43595
+          env:
+            - name: RACK_ENV
+              value: production
