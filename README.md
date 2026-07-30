@@ -18,6 +18,9 @@ autoquote/
 │   ├── deployment.yaml
 │   └── service.yaml
 ├── .github/workflows/    # CI pipeline
+├── BACKLOG.md            # Product backlog & user stories
+├── ITERATIONS.md         # Sprint / iteration tracking
+├── RETROSPECTIVE.md      # Iteration retrospective notes
 ├── Dockerfile
 ├── docker-compose.yml
 └── README.md
@@ -72,6 +75,20 @@ Or with Compose:
 ```bash
 docker compose up --build
 ```
+
+## Continuous Integration (GitHub Actions)
+
+Every push to `main` and every pull request triggers the CI workflow in `.github/workflows/`.
+
+The pipeline:
+- Sets up Ruby and installs dependencies
+- Starts the application
+- Runs the full RSpec + Cucumber suite
+- Fails the PR if any tests fail
+- Uploads test reports / artifacts on failure
+
+View the latest runs here:  
+https://github.com/kanetempleton/autoquote/actions
 
 ## Kubernetes (kind)
 
@@ -135,3 +152,28 @@ kind delete cluster --name autoquote
 - CI via GitHub Actions
 - **Docker** for containerized application
 - **Kubernetes** for basic deployment + service
+
+## Test Framework Structure
+
+- `spec/` – RSpec API tests (fast, focused, independent)
+- `features/` – Cucumber feature files written in Gherkin
+- `features/support/` – environment setup (`env.rb`) and hooks
+- `page_objects/` – Page Object classes that encapsulate UI interactions
+- `config/cucumber.yml` – Cucumber profiles (default, ci, etc.)
+
+API tests done via RSpec.
+UI/end-to-end flows done via Cucumber and go through Page Objects.
+
+## Agile Process
+
+This project was run as a lightweight Agile exercise to simulate how a real team might work.
+
+- **Product backlog** – User stories with acceptance criteria in [`BACKLOG.md`](BACKLOG.md)
+- **Iterations** – Work was delivered in short iterations. See [`ITERATIONS.md`](ITERATIONS.md) for goals, completed stories, and the Definition of Done for each iteration
+- **GitHub Flow** – All changes happened on short-lived feature branches and were merged to `main` via Pull Requests. `main` is protected and requires status checks.
+- **Continuous Integration** – Every PR runs the full test suite automatically.
+- **Retrospective** – Notes on what went well, what was difficult, and improvements for the next iteration are in [`RETROSPECTIVE.md`](RETROSPECTIVE.md).
+
+**Iteration 1** delivered the core quote service, the test framework, Docker, CI, and basic Kubernetes.  
+**Iteration 2** (planned / in progress) adds an optional discount-code feature and the tests that protect it.
+
